@@ -1,107 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:go_router/go_router.dart';
+import 'package:strascrous/api/restaurants.dart';
+import 'package:strascrous/components/menu.dart';
 
 class MenuPage extends StatefulWidget {
-    const MenuPage({super.key});
+    const MenuPage({
+        super.key,
+        required this.id,
+        required this.type
+    });
+
+    final String id;
+    final RestaurantType type;
 
     @override
     State<MenuPage> createState() => _MenuPageState();
 }
 
-final placeholderMenu = [
-    ListTile(
-        title: Text("Cafétéria"),
-        subtitle: Text(
-            "- Sandwich en formule étudiant à 1€ (maraîcher ou parisien)\n"
-            "- Divers sandwich (thon mayo, indien, etc.)\n"
-            "- Moricette garni\n"
-            "- Café, viennoiserie, pâtisserie américaine",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Etudiants - Barbecue"),
-        subtitle: Text(
-            "- Emincé de porc sauce champignon\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Etudiants - Plat du Jour 1"),
-        subtitle: Text(
-            "- Chili aux lentilles et haricots rouges\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Etudiants - Plat du Jour 2"),
-        subtitle: Text(
-            "- Nem et riz cantonais\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Etudiants - Pates"),
-        subtitle: Text(
-            "- Penne carbo\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Personnels - Plat du Jour 1"),
-        subtitle: Text(
-            "- Nems et riz cantonais\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Personnels - Plat du Jour 2"),
-        subtitle: Text(
-            "- Chili aux lentilles et haricots rouges\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Salle Des Personnels - Suggestion du Jour"),
-        subtitle: Text(
-            "- Emincé de porc sauce champignon\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    ),
-    ListTile(
-        title: Text("Origines De Nos Viandes Du Jour"),
-        subtitle: Text(
-            "- France et union européenne\n",
-            maxLines: 10,
-            overflow: TextOverflow.visible,
-        ),
-    )
-];
-
-class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
-    late final TabController _tabController;
-
-    @override
-    void initState() {
-        super.initState();
-        _tabController = TabController(length: 2, vsync: this);
-    }
+class _MenuPageState extends State<MenuPage> {
+    Restaurant? get restaurant => getRestaurant(widget.id);
+    final _pageController = PageController();
 
     @override
     void dispose() {
-        _tabController.dispose();
+        _pageController.dispose();
         super.dispose();
     }
 
     @override
     Widget build(BuildContext context) {
+        final selectedRestaurant = restaurant;
+        if (selectedRestaurant == null || selectedRestaurant.type != widget.type) {
+            final cafeteria = readRestaurants(RestaurantType.cafeteria);
+            final restaurants = readRestaurants(RestaurantType.restaurant);
+            if (cafeteria.isEmpty && restaurants.isEmpty) {
+                context.go("/");
+            } else if (
+                cafeteria.isNotEmpty && widget.type == RestaurantType.cafeteria ||
+                restaurants.isEmpty && cafeteria.isNotEmpty && widget.type == RestaurantType.restaurant
+            ) {
+                context.go("/cafeteria?id=${cafeteria.first.id}");
+            } else if (
+                restaurants.isNotEmpty && widget.type == RestaurantType.restaurant ||
+                restaurants.isNotEmpty && cafeteria.isEmpty && widget.type == RestaurantType.cafeteria
+            ) {
+                context.go("/resto?id=${restaurants.first.id}");
+            }
+        }
+
         return Scaffold(
             appBar: AppBar(
                 titleSpacing: 8,
@@ -115,7 +62,7 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
                             children: [
                                 Flexible(
                                     child: Text(
-                                        "Resto U' Illkirch",
+                                        selectedRestaurant.title,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: Theme.of(context).textTheme.titleLarge,
@@ -128,153 +75,17 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
                     )
                 ),
             ),
-            body: Column(
-                children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                            IconButton(
-                                tooltip: 'Jour précédent',
-                                icon: const Icon(Icons.chevron_left),
-                                onPressed: () => {},
-                            ),
-                            TextButton.icon(
-                                onPressed: () => {},
-                                label: Text("lundi 12 octobre 2026"),
-                            ),
-                            IconButton(
-                                tooltip: 'Jour suivant',
-                                icon: const Icon(Icons.chevron_right),
-                                onPressed: () => {},
-                            ),
-                        ],
-                    ),
-                    TabBar(
-                        controller: _tabController,
-                        tabs: [
-                            Tab(text: "Midi"),
-                            Tab(text: "Soir")
-                        ]
-                    ),
-                    Expanded(
-                        child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                                ListView(children: placeholderMenu),
-                                ListView(children: placeholderMenu),
-                            ],
-                        ),
-                    ),
-                    /* Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                            child: Text(
-                                "Midi",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                ),
-                            ),
-                        ),
-                    ),
-                    Divider(),
-
-                    Divider(),
-                    Center(
-                        child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                                "Soir",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
-                                ),
-                            ),
-                        )
-                    ),
-                    Divider(),
-                    ListTile(
-                        title: Text("Cafétéria"),
-                        subtitle: Text(
-                            "- Sandwich en formule étudiant à 1€ (maraîcher ou parisien)\n"
-                            "- Divers sandwich (thon mayo, indien, etc.)\n"
-                            "- Moricette garni\n"
-                            "- Café, viennoiserie, pâtisserie américaine",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Etudiants - Barbecue"),
-                        subtitle: Text(
-                            "- Emincé de porc sauce champignon\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Etudiants - Plat du Jour 1"),
-                        subtitle: Text(
-                            "- Chili aux lentilles et haricots rouges\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Etudiants - Plat du Jour 2"),
-                        subtitle: Text(
-                            "- Nem et riz cantonais\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Etudiants - Pates"),
-                        subtitle: Text(
-                            "- Penne carbo\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Personnels - Plat du Jour 1"),
-                        subtitle: Text(
-                            "- Nems et riz cantonais\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Personnels - Plat du Jour 2"),
-                        subtitle: Text(
-                            "- Chili aux lentilles et haricots rouges\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Salle Des Personnels - Suggestion du Jour"),
-                        subtitle: Text(
-                            "- Emincé de porc sauce champignon\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                    ),
-                    ListTile(
-                        title: Text("Origines De Nos Viandes Du Jour"),
-                        subtitle: Text(
-                            "- France et union européenne\n",
-                            maxLines: 10,
-                            overflow: TextOverflow.visible,
-                        ),
-                        ), */
-                ],
+            body: Pages(
+                id: widget.id,
+                pageController: _pageController,
             ),
         );
     }
 
     Future<void> openSelector(BuildContext context) async {
-        showModalBottomSheet<void>(
+        final restaurants = readRestaurants(widget.type);
+
+        final selectedId = await showModalBottomSheet<String>(
             context: context,
             builder: (BuildContext context) {
                 return Column(
@@ -289,38 +100,61 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
                         ),
                         Expanded(
                             child: ListView(
-                                children: [
-                                    ListTile(
-                                        leading: Icon(Icons.restaurant_outlined),
-                                        title: Text("Resto U' Illkirch"),
-                                        selected: true,
-                                        trailing: Icon(
-                                            Icons.check_circle,
-                                            color: Theme.of(context)
-                                                .colorScheme.primary,
-                                        ),
-                                    ),
-                                    ListTile(
-                                        leading: Icon(Icons.restaurant_outlined),
-                                        title: Text("Resto U' Esplanade"),
-                                        selected: false,
-                                    ),
-                                    ListTile(
-                                        leading: Icon(Icons.restaurant_outlined),
-                                        title: Text("Resto U' Gallia"),
-                                        selected: false,
-                                    ),
-                                    ListTile(
-                                        leading: Icon(Icons.restaurant_outlined),
-                                        title: Text("Resto U' Paul Appell"),
-                                        selected: false,
-                                    ),
-                                ],
+                                children: restaurants
+                                    .map((item) => RestaurantSelectItem(
+                                        item: item,
+                                        currentId: widget.id,
+                                    )).toList()
                             ),
                         ),
                     ],
                 );
             }
         );
+
+        if (!context.mounted || selectedId == null || selectedId == widget.id) return;
+
+        final uri = GoRouterState.of(context).uri;
+        context.replace(
+            uri.replace(
+                queryParameters: {
+                    ...uri.queryParametersAll,
+                    'id': [selectedId],
+                },
+            ).toString(),
+        );
+    }
+}
+
+class RestaurantSelectItem extends StatelessWidget {
+    const RestaurantSelectItem({
+        super.key,
+        required this.currentId,
+        required this.item
+    });
+    final String currentId;
+    final Restaurant item;
+
+    @override
+    Widget build(BuildContext context) {
+        if (item.id == currentId) {
+            return ListTile(
+                leading: Icon(Icons.restaurant_outlined),
+                title: Text(item.title),
+                selected: true,
+                trailing: Icon(
+                    Icons.check_circle,
+                    color: Theme.of(context)
+                        .colorScheme.primary,
+                ),
+            );
+        } else {
+            return ListTile(
+                leading: Icon(Icons.restaurant_outlined),
+                title: Text(item.title),
+                selected: false,
+                onTap: () => Navigator.of(context).pop(item.id),
+            );
+        }
     }
 }

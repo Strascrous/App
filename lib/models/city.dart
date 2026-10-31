@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class City {
     String name = '';
-    int id = -1;
+    String id = "";
     CityIcon? icon;
 
     City(this.name, this.id, this.icon);

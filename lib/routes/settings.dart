@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:strascrous/models/city.dart';
 import 'package:strascrous/providers/theme_provider.dart';
+import 'package:strascrous/routes/root.dart';
 
 class SettingsPage extends StatefulWidget {
     const SettingsPage({super.key});
@@ -11,6 +14,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+    final box = GetStorage();
+
     IconData _getThemeIcon(ThemeMode theme) {
         switch (theme) {
             case ThemeMode.dark:
@@ -20,6 +25,14 @@ class _SettingsPageState extends State<SettingsPage> {
             case ThemeMode.system:
                 return Icons.brightness_auto;
         }
+    }
+
+    String _getCityName() {
+        String cityId = box.read('city');
+        int index = CITIES.indexWhere((c) => c.id == cityId);
+
+        if (index == -1) return "Inconnue";
+        return CITIES[index].name;
     }
 
     @override
@@ -33,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ListTile(
                         leading: Icon(Icons.location_on),
                         title: const Text("Ville"),
-                        subtitle: const Text("Strasbourg"),
+                        subtitle: Text(_getCityName()),
                         onTap: () => GoRouter.of(context).go("/"),
                     ),
                     ListTile(

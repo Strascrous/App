@@ -1,8 +1,10 @@
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/navigation.dart';
 import 'package:strascrous/providers/theme_provider.dart';
 import 'package:strascrous/routes/menu.dart';
@@ -11,6 +13,7 @@ import 'package:strascrous/routes/settings.dart';
 
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await initializeDateFormatting('fr_FR');
     await GetStorage.init();
 
     runApp(const App());
@@ -61,6 +64,29 @@ class _AppState extends State<App> {
     }
 }
 
+Widget _buildMenuPage(GoRouterState state, RestaurantType type) {
+    final id = state.uri.queryParameters['id'];
+    final restaurants = readRestaurants(type);
+
+    if (id == null && restaurants.isEmpty) {
+        return Scaffold(
+            appBar: AppBar(
+                title: Text(type == RestaurantType.cafeteria ? 'Cafétéria' : "Resto U'"),
+            ),
+            body: Center(
+                child: Text(type == RestaurantType.cafeteria
+                    ? "Aucune cafétéria n'est disponible dans cette ville."
+                    : "Aucun restaurant n'est disponible dans cette ville."),
+            ),
+        );
+    }
+
+    return MenuPage(
+        id: id ?? restaurants.first.id,
+        type: type,
+    );
+}
+
 final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -81,8 +107,11 @@ final GoRouter router = GoRouter(
                 StatefulShellBranch(
                     routes: [
                         GoRoute(
-                            path: '/uwu',
-                            builder: (context, state) => const MenuPage(),
+                            path: '/resto',
+                            builder: (context, state) => _buildMenuPage(
+                                state,
+                                RestaurantType.restaurant,
+                            ),
                         ),
                     ],
                 ),
@@ -90,13 +119,9 @@ final GoRouter router = GoRouter(
                     routes: [
                         GoRoute(
                             path: '/cafeteria',
-                            builder: (context, state) => Scaffold(
-                                appBar: AppBar(
-                                    title: const Text('Cafétéria'),
-                                ),
-                                body: const Center(
-                                    child: Text('À venir'),
-                                ),
+                            builder: (context, state) => _buildMenuPage(
+                                state,
+                                RestaurantType.cafeteria,
                             ),
                         ),
                     ],

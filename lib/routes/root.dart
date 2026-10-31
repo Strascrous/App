@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/models/city.dart';
 
-final cities = [
-    City("Strasbourg", 1, CityIcon.svg(name: "strasbourg")),
-    City("Mulhouse", 2, CityIcon.svg(name: "mulhouse")),
-    City("Colmar", 3, CityIcon.svg(name: "colmar")),
+final CITIES = [
+    // Académie de Strasbourg
+    City("Strasbourg", "strasbourg", CityIcon.svg(name: "strasbourg")),
+    City("Mulhouse", "mulhouse", CityIcon.svg(name: "mulhouse")),
+    City("Colmar", "colmar", CityIcon.svg(name: "colmar")),
+
+    // Académie de Nancy-Metz
+    City("Nancy", "nancy", CityIcon.builtin(icon: Icons.location_city))
 ];
 
 class RootPage extends StatefulWidget {
@@ -18,6 +24,7 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
     final SearchController _searchController = SearchController();
+    final _box = GetStorage();
     int? selectedCity;
 
     @override
@@ -27,11 +34,35 @@ class _RootPageState extends State<RootPage> {
     }
 
     void selectCity(int city) {
-        _searchController.closeView(cities[city].name);
+        _searchController.closeView(CITIES[city].name);
 
         setState(() {
             selectedCity = city;
         });
+    }
+
+    void submit() async {
+        final id = CITIES[selectedCity ?? 0].id;
+
+        try {
+            final restaurants = await fetchRestaurants(id);
+            if (!mounted) return;
+
+            if (restaurants.isEmpty) {
+                // TODO: Snackbar
+                return;
+            }
+
+            await _box.write('city', id);
+            if (!mounted) return;
+            final restaurant = restaurants.first;
+            if (restaurant.type == RestaurantType.cafeteria) return context.go('/cafeteria?id=${restaurants[0].id}');
+            context.go('/resto?id=${restaurants[0].id}');
+        } catch (e) {
+            if (!mounted) return;
+            print(e);
+            // TODO: Snackbar
+        }
     }
 
     @override
@@ -56,7 +87,7 @@ class _RootPageState extends State<RootPage> {
                         suggestionsBuilder: (context, controller) {
                             final query = controller.text.trim().toLowerCase();
 
-                            final results = cities.where((city) {
+                            final results = CITIES.where((city) {
                                 return city.name.toLowerCase().contains(query);
                             }).toList();
 
@@ -81,8 +112,8 @@ class _RootPageState extends State<RootPage> {
                     if (selectedCity != null) ...[
                         const SizedBox(height: 24),
                         ListTile(
-                            leading: cities[selectedCity!].icon,
-                            title: Text(cities[selectedCity!].name),
+                            leading: CITIES[selectedCity!].icon,
+                            title: Text(CITIES[selectedCity!].name),
                             trailing: Icon(Icons.check),
                             subtitle: const Text('Ville sélectionnée'),
                         ),
@@ -97,7 +128,7 @@ class _RootPageState extends State<RootPage> {
         if (selectedCity == null) return Container();
 
         return FloatingActionButton(
-            onPressed: () => GoRouter.of(context).go("/uwu"),
+            onPressed: submit,
             child: Icon(Icons.check)
         );
     }
