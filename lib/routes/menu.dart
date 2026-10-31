@@ -29,25 +29,6 @@ class _MenuPageState extends State<MenuPage> {
 
     @override
     Widget build(BuildContext context) {
-        final selectedRestaurant = restaurant;
-        if (selectedRestaurant == null || selectedRestaurant.type != widget.type) {
-            final cafeteria = readRestaurants(RestaurantType.cafeteria);
-            final restaurants = readRestaurants(RestaurantType.restaurant);
-            if (cafeteria.isEmpty && restaurants.isEmpty) {
-                context.go("/");
-            } else if (
-                cafeteria.isNotEmpty && widget.type == RestaurantType.cafeteria ||
-                restaurants.isEmpty && cafeteria.isNotEmpty && widget.type == RestaurantType.restaurant
-            ) {
-                context.go("/cafeteria?id=${cafeteria.first.id}");
-            } else if (
-                restaurants.isNotEmpty && widget.type == RestaurantType.restaurant ||
-                restaurants.isNotEmpty && cafeteria.isEmpty && widget.type == RestaurantType.cafeteria
-            ) {
-                context.go("/resto?id=${restaurants.first.id}");
-            }
-        }
-
         return Scaffold(
             appBar: AppBar(
                 titleSpacing: 8,
@@ -61,7 +42,7 @@ class _MenuPageState extends State<MenuPage> {
                             children: [
                                 Flexible(
                                     child: Text(
-                                        selectedRestaurant!.title,
+                                        restaurant!.title,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: Theme.of(context).textTheme.titleLarge,

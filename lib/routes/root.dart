@@ -7,12 +7,33 @@ import 'package:strascrous/models/city.dart';
 
 final CITIES = [
     // Académie de Strasbourg
-    City("Strasbourg", "strasbourg", CityIcon.svg(name: "strasbourg")),
-    City("Mulhouse", "mulhouse", CityIcon.svg(name: "mulhouse")),
-    City("Colmar", "colmar", CityIcon.svg(name: "colmar")),
+    City("Strasbourg", "strasbourg", CityIcon.svg(name: "strasbourg")), // Le Bretzel miam l'Alsace
+    City("Mulhouse", "mulhouse", CityIcon.svg(name: "mulhouse")), // Coeur industriel fût une époque
+    City("Colmar", "colmar", CityIcon.svg(name: "colmar")), // La route des vins
 
     // Académie de Nancy-Metz
-    City("Nancy", "nancy", CityIcon.builtin(icon: Icons.location_city))
+    City("Nancy", "nancy", CityIcon.builtin(icon: Icons.local_florist)), // Le chardon est l'emblème de Nancy
+    City("Metz", "metz", CityIcon.svg(name: "metz")), // Graoully
+    City("Épinal", "epinal", CityIcon.svg(name: "epinal")), // Imagerie d'Épinal
+    City("Longwy", "longwy", CityIcon.builtin(icon: Icons.castle)), // Vauban
+    City("Yutz", "yutz", CityIcon.builtin(icon: Icons.waves)), // Moselle
+
+    // Bourgogne-Franche-Comté
+    City("Belfort", "belfort", CityIcon.builtin(icon: Icons.pets)), // Lion de Belfort
+    City("Besançon", "besancon", CityIcon.builtin(icon: Icons.watch)), // Capitale française de l'horlogerie
+    City("Dijon", "dijon", CityIcon.svg(name: "dijon")), // Chouette de l'église Notre-Dame
+    City("Le Creusot", "le.creusot", CityIcon.svg(name: "le.creusot")), // Marteau-Pilon de 100 tonnes = emblème de la ville
+    City("Montbéliard", "montbeliard", CityIcon.builtin(icon: Icons.directions_car)), // Peugeot (Sochaux à coté)
+
+    // Académie de Rennes
+    City("Rennes", "rennes", CityIcon.builtin(icon: Icons.account_balance)), // Parlement de Bretagne
+    City("Brest", "brest", CityIcon.builtin(icon: Icons.anchor)), // Port militaire
+    City("Lannion", "lannion", CityIcon.builtin(icon: Icons.satellite_alt)), // radôme de Pleumeur-Bodou (première liaison satellite transatlantique)
+    City("Lorient", "lorient", CityIcon.builtin(icon: Icons.sailing)), // Course au large
+    City("Quimper", "quimper", CityIcon.svg(name: "quimper")), // faïence de Quimper
+    City("Saint Brieuc", "saint.brieuc", CityIcon.svg(name: "saint.brieuc")), // Pêche
+    City("Saint Malo", "saint.malo", CityIcon.svg(name: "saint.malo")), // Cité corsaire (Surcouf, Duguay-Trouin)
+    City("Vannes", "vannes", CityIcon.svg(name: "vannes")), // Porte du golfe du Morbihan
 ];
 
 class RootPage extends StatefulWidget {
