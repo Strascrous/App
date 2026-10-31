@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:strascrous/models/city.dart';
 import 'package:strascrous/providers/theme_provider.dart';
 import 'package:strascrous/routes/root.dart';
 

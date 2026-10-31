@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/menu.dart';
@@ -62,7 +61,7 @@ class _MenuPageState extends State<MenuPage> {
                             children: [
                                 Flexible(
                                     child: Text(
-                                        selectedRestaurant.title,
+                                        selectedRestaurant!.title,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: Theme.of(context).textTheme.titleLarge,
