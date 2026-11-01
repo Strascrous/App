@@ -62,6 +62,7 @@ class _MenuPageState extends State<MenuPage> {
         );
     }
 
+    // TODO: refresh restaurants list
     Future<void> openSelector(BuildContext context) async {
         final restaurants = readRestaurants(widget.type);
 

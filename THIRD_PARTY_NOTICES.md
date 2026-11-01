@@ -23,5 +23,12 @@ The following SVG icons originate from the Material Design Icons collection:
 - [vannes.svg](assets/icons/cities/vannes.svg) (original: island)
 - [dijon.svg](assets/icons/cities/dijon.svg) (original: owl)
 - [le.creusot.svg](assets/icons/cities/le.creusot.svg) (original: hammer)
+- [laon.svg](assets/icons/cities/laon.svg) (original: cow)
+- [soissons.svg](assets/icons/cities/soissons.svg) (original: crown)
+- [avignon.svg](assets/icons/cities/avignon.svg) (original: bridge)
+- [saint.claude.svg](assets/icons/cities/saint.claude.svg) (original: volcano)
+- [cayenne.svg](assets/icons/cities/cayenne.svg) (original: chili-mild)
+- [villeneuve.lot.svg](assets/icons/cities/villeneuve.lot.svg) (original: bridge)
+
 
 See [pictogrammers-LICENSE.txt](assets/licenses/pictogrammers-LICENSE.txt) for the complete license text.
