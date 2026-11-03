@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:strascrous/providers/theme_provider.dart';
-import 'package:strascrous/routes/root.dart';
+import 'package:strascrous_data/data.dart';
 
 class SettingsPage extends StatefulWidget {
     const SettingsPage({super.key});
@@ -28,10 +28,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
     String _getCityName() {
         String cityId = box.read('city');
-        int index = CITIES.indexWhere((c) => c.id == cityId);
+        int index = cities.indexWhere((c) => c.id == cityId);
 
         if (index == -1) return "Inconnue";
-        return CITIES[index].name;
+        return cities[index].name;
     }
 
     @override
