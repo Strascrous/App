@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
@@ -91,11 +90,11 @@ class _RootPageState extends State<RootPage> {
                                 ];
                             }
 
-                            return results.mapIndexed((i, city) {
+                            return results.map((city) {
                                 return ListTile(
                                     leading: city.icon,
                                     title: Text(city.name),
-                                    onTap: () => selectCity(i),
+                                    onTap: () => selectCity(cities.indexOf(city)),
                                 );
                             }).toList();
                         },

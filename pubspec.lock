@@ -455,10 +455,10 @@ packages:
     description:
       path: "."
       ref: "generated/dart"
-      resolved-ref: d97f0e231c7031abdbaaebccbae70bc5e90326ca
+      resolved-ref: d824d0bbdec75308ceb19158d0cbafbfbf9273f4
       url: "https://github.com/Strascrous/Data.git"
     source: git
-    version: "0.9.1"
+    version: "1.0.0"
   stream_channel:
     dependency: transitive
     description:
