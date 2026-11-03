@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/menu.dart';
@@ -19,6 +20,7 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
     Restaurant? get restaurant => getRestaurant(widget.id);
+    final box = GetStorage();
     final _pageController = PageController();
 
     @override
@@ -42,7 +44,7 @@ class _MenuPageState extends State<MenuPage> {
                             children: [
                                 Flexible(
                                     child: Text(
-                                        restaurant!.title,
+                                        restaurant?.title ?? 'Choisir un établissement',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                         style: Theme.of(context).textTheme.titleLarge,
@@ -62,33 +64,83 @@ class _MenuPageState extends State<MenuPage> {
         );
     }
 
-    // TODO: refresh restaurants list
     Future<void> openSelector(BuildContext context) async {
-        final restaurants = readRestaurants(widget.type);
+        var restaurants = readRestaurants(widget.type);
+        var isRefreshing = false;
 
         final selectedId = await showModalBottomSheet<String>(
             context: context,
             builder: (BuildContext context) {
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                            child: Text(
-                                'Choisir un restaurant',
-                                style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                        ),
-                        Expanded(
-                            child: ListView(
-                                children: restaurants
-                                    .map((item) => RestaurantSelectItem(
-                                        item: item,
-                                        currentId: widget.id,
-                                    )).toList()
-                            ),
-                        ),
-                    ],
+                return StatefulBuilder(
+                    builder: (selectorContext, setSelectorState) {
+                        return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Padding(
+                                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+                                    child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                            Expanded(
+                                                child: Semantics(
+                                                    header: true,
+                                                    child: Text(
+                                                        widget.type == RestaurantType.cafeteria
+                                                            ? 'Choisir une cafétéria'
+                                                            : 'Choisir un restaurant',
+                                                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                                            fontWeight: FontWeight.w600,
+                                                        ),
+                                                    ),
+                                                ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            IconButton(
+                                                tooltip: 'Actualiser la liste',
+                                                icon: isRefreshing
+                                                    ? const SizedBox(
+                                                        width: 24,
+                                                        height: 24,
+                                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                                    )
+                                                    : const Icon(Icons.refresh),
+                                                onPressed: isRefreshing ? null : () async {
+                                                    setSelectorState(() => isRefreshing = true);
+                                                    try {
+                                                        String cityId = box.read('city');
+                                                        await fetchRestaurants(cityId);
+
+                                                        if (mounted) setState(() {});
+                                                        if (!selectorContext.mounted) return;
+
+                                                        setSelectorState(() {
+                                                            restaurants = readRestaurants(widget.type);
+                                                        });
+                                                    } catch (_) {
+                                                        if (!selectorContext.mounted) return;
+                                                        // TODO: snackbar
+                                                    } finally {
+                                                        if (selectorContext.mounted) {
+                                                            setSelectorState(() => isRefreshing = false);
+                                                        }
+                                                    }
+                                                },
+                                            )
+                                        ],
+                                    ),
+                                ),
+                                Expanded(
+                                    child: ListView(
+                                        children: restaurants
+                                            .map((item) => RestaurantSelectItem(
+                                                item: item,
+                                                currentId: widget.id,
+                                            )).toList()
+                                    ),
+                                ),
+                            ],
+                        );
+                    },
                 );
             }
         );

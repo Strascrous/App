@@ -64,6 +64,7 @@ class _RootPageState extends State<RootPage> {
             body: ListView(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 children: [
+                    // TODO: location
                      const Text(
                          "Choisis ta ville pour retrouver les restaurants universitaires et les services à proximité.",
                          textScaler: TextScaler.linear(1.2),
