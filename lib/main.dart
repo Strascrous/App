@@ -89,7 +89,7 @@ Widget _buildMenuPage(GoRouterState state, RestaurantType type) {
 
 // TODO: stockage de la dernière route
 final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: GetStorage().read('last_restaurant') ?? '/',
     routes: [
         GoRoute(
             path: '/',

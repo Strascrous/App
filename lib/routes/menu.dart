@@ -24,6 +24,34 @@ class _MenuPageState extends State<MenuPage> {
     final _pageController = PageController();
 
     @override
+    void initState() {
+        super.initState();
+        _saveLastRestaurant();
+    }
+
+    @override
+    void didUpdateWidget(covariant MenuPage oldWidget) {
+        super.didUpdateWidget(oldWidget);
+
+        if (oldWidget.id != widget.id || oldWidget.type != widget.type) {
+            _saveLastRestaurant();
+        }
+    }
+
+    Future<void> _saveLastRestaurant() async {
+        final path = widget.type == RestaurantType.cafeteria
+            ? '/cafeteria'
+            : '/resto';
+
+        final uri = Uri(
+            path: path,
+            queryParameters: {'id': widget.id},
+        );
+
+        await box.write('last_restaurant', uri.toString());
+    }
+
+    @override
     void dispose() {
         _pageController.dispose();
         super.dispose();
