@@ -4,6 +4,38 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 import 'package:strascrous/api/config.dart';
 
+class Restaurant {
+    final String id;
+    final String title;
+    final String description;
+    final RestaurantType type;
+    final RestaurantDetails details;
+
+    const Restaurant({ required this.id, required this.title, required this.description,
+        required this.type, required this.details });
+
+    factory Restaurant.fromJson(Map<String, dynamic> json) {
+        return switch (json) {
+            { 'id': String id, 'title': String title, 'description': String description,
+                'type': String type, 'details': Map<String, dynamic> details } => Restaurant(
+                id: id,
+                title: title,
+                description: description,
+                type: RestaurantType.fromJson(type),
+                details: RestaurantDetails.fromJson(details)
+            ),
+            _ => throw const FormatException("Failed to load restaurant"),
+        };
+    }
+
+    Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'type': type.toJson(),
+        'details': details.toJson(),
+    };
+}
 
 enum RestaurantType {
     restaurant('restaurant'),
@@ -21,29 +53,67 @@ enum RestaurantType {
     String toJson() => value;
 }
 
-class Restaurant {
-    final String id;
-    final String title;
-    final RestaurantType type;
+class RestaurantDetails {
+    final String hours;
+    final String address;
+    final String access;
+    final List<Payment> payments;
+    final List<String> additionalPayments;
+    final bool wifi;
+    final bool pmr;
 
-    const Restaurant({ required this.id, required this.title, required this.type });
+    const RestaurantDetails({
+        required this.hours, required this.address, required this.access,
+        required this.payments, required this.additionalPayments,
+        required this.wifi, required this.pmr
+    });
 
-    factory Restaurant.fromJson(Map<String, dynamic> json) {
+    factory RestaurantDetails.fromJson(Map<String, dynamic> json) {
         return switch (json) {
-            { 'id': String id, 'title': String title, 'type': String type } => Restaurant(
-                id: id,
-                title: title,
-                type: RestaurantType.fromJson(type)
+            { 'hours': String hours, 'address': String address, 'access': String access,
+                'payments': List<dynamic> payments, 'additional_payments': List<dynamic> additionalPayments,
+                'wifi': bool wifi, 'pmr': bool pmr } => RestaurantDetails(
+                hours: hours,
+                address: address,
+                access: access,
+                payments: payments
+                    .map((value) => Payment.fromJson(value as String))
+                    .toList(),
+                additionalPayments: List<String>.from(additionalPayments),
+                wifi: wifi,
+                pmr: pmr
             ),
-            _ => throw const FormatException("Failed to load meal"),
+            _ => throw const FormatException("Failed to load RestaurantDetails"),
         };
     }
 
     Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'type': type.toJson(),
+        'hours': hours,
+        'address': address,
+        'access': access,
+        'payments': payments.map((payment) => payment.toJson()).toList(),
+        'additional_payments': additionalPayments,
+        'wifi': wifi,
+        'pmr': pmr,
     };
+}
+
+enum Payment {
+    izly('izly'),
+    card('cb'),
+    cash('espece'),
+    moneo('moneo');
+
+    const Payment(this.value);
+    final String value;
+
+    static Payment fromJson(String s) =>
+        Payment.values.firstWhere(
+            (e) => e.value == s,
+            orElse: () => throw FormatException('unknown Payment: $s'),
+        );
+
+    String toJson() => value;
 }
 
 Future<List<Restaurant>> fetchRestaurants(String city) async {

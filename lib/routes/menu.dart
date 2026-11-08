@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/menu.dart';
+import 'package:strascrous/components/svg.dart';
 
 class MenuPage extends StatefulWidget {
     const MenuPage({
@@ -84,6 +85,12 @@ class _MenuPageState extends State<MenuPage> {
                         )
                     )
                 ),
+                actions: [
+                    IconButton(
+                        icon: Icon(Icons.info),
+                        onPressed: () => openInformation(context),
+                    )
+                ],
             ),
             body: Pages(
                 id: widget.id,
@@ -185,6 +192,97 @@ class _MenuPageState extends State<MenuPage> {
             ).toString(),
         );
     }
+
+    Future<void> openInformation(BuildContext context) async {
+        if (restaurant == null) return;
+        final r = restaurant!;
+
+        final List<Widget> payments = [];
+        for (var p in r.details.payments) {
+            switch (p) {
+                case Payment.izly:
+                    payments.add(IconSvg("payments/izly", alt: "Izly"));
+                    break;
+                case Payment.card:
+                    payments.add(Icon(Icons.credit_card, semanticLabel: "Carte bancaire"));
+                    break;
+                case Payment.cash:
+                    payments.add(Icon(Icons.attach_money, semanticLabel: "Espèce"));
+                    break;
+                case Payment.moneo:
+                    payments.add(IconSvg("payments/moneo", alt: "Monéo"));
+                    break;
+            }
+        }
+
+        await showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+                return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                    Expanded(
+                                        child: Semantics(
+                                            header: true,
+                                            child: Text(
+                                                r.title,
+                                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                ),
+                                            ),
+                                        ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    RestaurantDetailsIcons(details: r.details)
+                                ]
+                            )
+                        ),
+                        Expanded(
+                            child: ListView(
+                                children: [
+                                    if (r.details.hours.isNotEmpty) RestaurantDetailsTile(
+                                        title: "Horaires",
+                                        subtitle: r.details.hours,
+                                        icon: Icons.access_time
+                                    ),
+                                    if (r.details.address.isNotEmpty) RestaurantDetailsTile(
+                                        title: "Adresse",
+                                        subtitle: r.details.address,
+                                        icon: Icons.location_on
+                                    ),
+                                    if (r.details.access.isNotEmpty) RestaurantDetailsTile(
+                                        title: "Moyens d'accès",
+                                        subtitle: r.details.access,
+                                        icon: Icons.tram
+                                    ),
+                                    if (payments.isNotEmpty) ListTile(
+                                        titleAlignment: ListTileTitleAlignment.top,
+                                        leading: Padding(
+                                            padding: EdgeInsetsGeometry.only(top: 4),
+                                            child: Icon(Icons.account_balance_wallet_outlined),
+                                        ),
+                                        title: Text("Moyens de paiement"),
+                                        subtitle: Padding(
+                                            padding: EdgeInsetsGeometry.only(top: 2),
+                                            child: Row(
+                                                spacing: 8,
+                                                children: payments,
+                                            ),
+                                        )
+                                    )
+                                ],
+                            ),
+                        )
+                    ]
+                );
+            }
+        );
+    }
 }
 
 class RestaurantSelectItem extends StatelessWidget {
@@ -215,7 +313,58 @@ class RestaurantSelectItem extends StatelessWidget {
                 title: Text(item.title),
                 selected: false,
                 onTap: () => Navigator.of(context).pop(item.id),
+                trailing: RestaurantDetailsIcons(details: item.details),
             );
         }
+    }
+}
+
+class RestaurantDetailsIcons extends StatelessWidget {
+    const RestaurantDetailsIcons({ super.key, required this.details });
+    final RestaurantDetails details;
+
+    @override
+    Widget build(BuildContext context) {
+        return details.wifi || details.pmr
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 8,
+                children: [
+                    if (details.pmr) const Icon(Icons.accessible, semanticLabel: "Accessible au PMR"),
+                    if (details.wifi) const Icon(Icons.wifi, semanticLabel: "Wi-Fi disponible"),
+                ],
+            )
+            : SizedBox();
+    }
+}
+
+class RestaurantDetailsTile extends StatelessWidget {
+    const RestaurantDetailsTile({ super.key, required this.title, required this.subtitle, required this.icon });
+    final String title;
+    final String subtitle;
+    final IconData icon;
+
+    @override
+    Widget build(BuildContext context) {
+        if (!subtitle.contains('\n')) {
+            return ListTile(
+                leading: Icon(icon),
+                title: Text(title),
+                subtitle: Text(subtitle, maxLines: 10),
+            );
+        }
+
+        return ListTile(
+            titleAlignment: ListTileTitleAlignment.top,
+            leading: Padding(
+                padding: EdgeInsetsGeometry.only(top: 4),
+                child: Icon(icon),
+            ),
+            title: Text(title),
+            subtitle: Text(
+                subtitle,
+                maxLines: 10,
+            ),
+        );
     }
 }
