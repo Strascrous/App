@@ -38,7 +38,7 @@ class _CreditsPageState extends State<CreditsPage> {
                     SectionHeader(icon: Icons.image, title: "Icônes"),
                     ListTile(
                         title: const Text("Material Design Icons"),
-                        subtitle: const Text("Certaines icônes utilisés pour les villes"),
+                        subtitle: const Text("Certaines icônes utilisées pour les villes"),
                         leading: IconSvg("credits/mdi", alt: "Material Desgin Icons"),
                         onTap: () => openUri(Uri.parse("https://pictogrammers.com/library/mdi/")),
                     ),
