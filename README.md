@@ -22,6 +22,7 @@ flutter pub get
 L’URL de l’API est définie dans [`lib/api/config.dart`](lib/api/config.dart) :
 ```dart
 const String PROD_BASE_URL = 'http://localhost:3000';
+const String DEV_BASE_URL = 'http://10.0.2.2:3000';
 ```
 Vous devez adapter l'URL à votre environnement.
 
