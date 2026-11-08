@@ -54,8 +54,10 @@ enum RestaurantType {
 }
 
 class RestaurantDetails {
-    final String hours;
     final String address;
+    final double longitude;
+    final double latitude;
+    final String hours;
     final String access;
     final List<Payment> payments;
     final List<String> additionalPayments;
@@ -63,18 +65,21 @@ class RestaurantDetails {
     final bool pmr;
 
     const RestaurantDetails({
-        required this.hours, required this.address, required this.access,
+        required this.address, required this.longitude, required this.latitude,
+        required this.hours, required this.access,
         required this.payments, required this.additionalPayments,
         required this.wifi, required this.pmr
     });
 
     factory RestaurantDetails.fromJson(Map<String, dynamic> json) {
         return switch (json) {
-            { 'hours': String hours, 'address': String address, 'access': String access,
+            { 'address': String address, 'lon': num lon, 'lat': num lat, 'hours': String hours, 'access': String access,
                 'payments': List<dynamic> payments, 'additional_payments': List<dynamic> additionalPayments,
                 'wifi': bool wifi, 'pmr': bool pmr } => RestaurantDetails(
-                hours: hours,
                 address: address,
+                longitude: lon.toDouble(),
+                latitude: lat.toDouble(),
+                hours: hours,
                 access: access,
                 payments: payments
                     .map((value) => Payment.fromJson(value as String))
@@ -88,8 +93,10 @@ class RestaurantDetails {
     }
 
     Map<String, dynamic> toJson() => {
-        'hours': hours,
         'address': address,
+        'lon': longitude,
+        'lat': latitude,
+        'hours': hours,
         'access': access,
         'payments': payments.map((payment) => payment.toJson()).toList(),
         'additional_payments': additionalPayments,

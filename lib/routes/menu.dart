@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/menu.dart';
 import 'package:strascrous/components/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuPage extends StatefulWidget {
     const MenuPage({
@@ -253,7 +255,24 @@ class _MenuPageState extends State<MenuPage> {
                                     if (r.details.address.isNotEmpty) RestaurantDetailsTile(
                                         title: "Adresse",
                                         subtitle: r.details.address,
-                                        icon: Icons.location_on
+                                        icon: Icons.location_on,
+                                        onPressed: () async {
+                                            final coordinates = '${r.details.latitude},${r.details.longitude}';
+                                            // TODO: Rendre ça compatible iOS quand j'ajouterais iOS
+                                            final uri = Uri(
+                                                scheme: 'geo',
+                                                path: coordinates,
+                                                queryParameters: {'q': '$coordinates(${r.title})'},
+                                            );
+
+                                            try {
+                                                if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
+                                            } catch (_) {}
+
+                                            if (context.mounted) {
+                                                // TODO: Snackbar
+                                            }
+                                        },
                                     ),
                                     if (r.details.access.isNotEmpty) RestaurantDetailsTile(
                                         title: "Moyens d'accès",
@@ -339,10 +358,11 @@ class RestaurantDetailsIcons extends StatelessWidget {
 }
 
 class RestaurantDetailsTile extends StatelessWidget {
-    const RestaurantDetailsTile({ super.key, required this.title, required this.subtitle, required this.icon });
+    const RestaurantDetailsTile({ super.key, required this.title, required this.subtitle, required this.icon, this.onPressed });
     final String title;
     final String subtitle;
     final IconData icon;
+    final VoidCallback? onPressed;
 
     @override
     Widget build(BuildContext context) {
@@ -351,6 +371,7 @@ class RestaurantDetailsTile extends StatelessWidget {
                 leading: Icon(icon),
                 title: Text(title),
                 subtitle: Text(subtitle, maxLines: 10),
+                onTap: onPressed,
             );
         }
 
@@ -365,6 +386,7 @@ class RestaurantDetailsTile extends StatelessWidget {
                 subtitle,
                 maxLines: 10,
             ),
+            onTap: onPressed,
         );
     }
 }
