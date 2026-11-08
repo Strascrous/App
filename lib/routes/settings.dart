@@ -14,7 +14,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-    static Uri sourceCodeURI = Uri.parse("https://git.oriondev.fr/IUTRS/strascrous-ui");
+    static Uri sourceCodeURI = Uri.parse("https://github.com/Strascrous/App");
     static Uri donationURI = Uri.parse("https://ko-fi.com/orion_offi");
     final box = GetStorage();
 
