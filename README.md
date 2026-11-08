@@ -4,21 +4,18 @@ Strascrous est une application Flutter permettant de consulter les menus des res
 Cette application est pour le moment uniquement disponible pour **Android**.
 
 ## Prérequis
-
 - [Flutter](https://docs.flutter.dev/get-started/install)
 - Le SDK Android
 - Un appareil Android (un émulateur ou un appareil physique) 
 - Une instance de l’API Strascrous accessible depuis l’appareil
 
 ## Installation et lancement
-
 Depuis la racine du dépôt :
 ```sh
 flutter pub get
 ```
 
 ### Configurer l’API
-
 L’URL de l’API est définie dans [`lib/api/config.dart`](lib/api/config.dart) :
 ```dart
 const String PROD_BASE_URL = 'http://localhost:3000';
@@ -36,7 +33,6 @@ flutter run
 
 ## Développement
 ### Organisation du projet
-
 ```text
 lib/
 ├── main.dart                 # Initialisation, thèmes et routage
