@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/navigation.dart';
 import 'package:strascrous/providers/theme_provider.dart';
+import 'package:strascrous/routes/credits.dart';
 import 'package:strascrous/routes/menu.dart';
 import 'package:strascrous/routes/root.dart';
 import 'package:strascrous/routes/settings.dart';
@@ -136,5 +137,9 @@ final GoRouter router = GoRouter(
                 ),
             ],
         ),
+        GoRoute(
+            path: "/credits",
+            builder: (context, state) => const CreditsPage()
+        )
     ]
 );

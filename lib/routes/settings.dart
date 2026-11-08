@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:strascrous/providers/theme_provider.dart';
+import 'package:strascrous/utils/uri.dart';
 import 'package:strascrous_data/data.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -13,6 +14,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+    static Uri sourceCodeURI = Uri.parse("https://git.oriondev.fr/IUTRS/strascrous-ui");
+    static Uri donationURI = Uri.parse("https://ko-fi.com/orion_offi");
     final box = GetStorage();
 
     IconData _getThemeIcon(ThemeMode theme) {
@@ -55,6 +58,23 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Thème'),
                         subtitle: const Text("Cliquez pour sélectionner un autre thème"),
                         onTap: () => _openThemeSelector(context),
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.favorite),
+                        title: const Text('Donation'),
+                        subtitle: const Text("Soutenir l'application en faisant une petite donation"),
+                        onTap: () => openUri(donationURI),
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.code),
+                        title: const Text('Code source'),
+                        subtitle: const Text("Le code source de l'application"),
+                        onTap: () => openUri(sourceCodeURI),
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.info_outline),
+                        title: const Text('Crédits'),
+                        onTap: () => context.push('/credits'),
                     )
                 ],
             ),
