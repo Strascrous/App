@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:strascrous/api/menus.dart';
+import 'package:strascrous/components/error_view.dart';
 
 class Pages extends StatefulWidget {
     const Pages({ super.key, required this.id, required this.pageController });
@@ -216,7 +217,7 @@ class PagesState extends State<Pages> {
                         ],
                     );
                 } else if (snapshot.hasError) {
-                    return _buildMessage('${snapshot.error!}');
+                    return ErrorView(error: snapshot.error, onRetry: _refreshMenus);
                 }
 
                 return Center(child: CircularProgressIndicator());
