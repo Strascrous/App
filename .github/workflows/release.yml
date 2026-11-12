@@ -1,0 +1,110 @@
+name: Release
+run-name: Release ${{ inputs.tag || github.event.release.tag_name }}
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: "Tag d'une release existante à builder (ex: v1.0.0)"
+                required: true
+
+permissions:
+    contents: write
+
+concurrency:
+    group: release-${{ inputs.tag || github.event.release.tag_name }}
+    cancel-in-progress: false
+
+env:
+    FLUTTER_VERSION: "3.47.4"
+    TAG: ${{ inputs.tag || github.event.release.tag_name }}
+    BUILD_NUMBER: ${{ github.run_number }}
+
+jobs:
+    android:
+        name: Build & release Android
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ env.TAG }}
+
+            - name: Vérifier que le tag correspond à pubspec.yaml
+              run: |
+                  PUBSPEC_VERSION=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:[[:space:]]*([^+]+).*/\1/')
+                  if [ "v${PUBSPEC_VERSION}" != "${TAG}" ]; then
+                    echo "::error::Le tag ${TAG} ne correspond pas à la version de pubspec.yaml (v${PUBSPEC_VERSION})"
+                    exit 1
+                  fi
+                  echo "VERSION=${PUBSPEC_VERSION}" >> "$GITHUB_ENV"
+
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: "17"
+                  cache: gradle
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+                  flutter-version: ${{ env.FLUTTER_VERSION }}
+                  cache: true
+
+            - name: Installer les dépendances
+              run: flutter pub get
+
+            - name: Analyse
+              run: flutter analyze --no-fatal-infos
+
+            - name: Configurer la signature
+              env:
+                  KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+                  KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+                  KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+                  KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+              run: |
+                  echo "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+                  cat > android/key.properties <<EOF
+                  storePassword=${KEYSTORE_PASSWORD}
+                  keyPassword=${KEY_PASSWORD}
+                  keyAlias=${KEY_ALIAS}
+                  storeFile=upload-keystore.jks
+                  EOF
+
+            - name: Garder le même versionCode pour tous les APK
+              run: echo "force-version-code-ignoring-abi=true" >> android/gradle.properties
+
+            - name: Build APK (par ABI)
+              run: flutter build apk --release --split-per-abi --build-number "${BUILD_NUMBER}"
+
+            - name: Build APK (universel)
+              run: flutter build apk --release --build-number "${BUILD_NUMBER}"
+
+            - name: Build App Bundle
+              run: flutter build appbundle --release --build-number "${BUILD_NUMBER}"
+
+            - name: Préparer les artefacts
+              run: |
+                  mkdir -p dist
+                  APK_DIR=build/app/outputs/flutter-apk
+                  cp "$APK_DIR/app-release.apk"             "dist/strascrous-${VERSION}.apk"
+                  cp "$APK_DIR/app-arm64-v8a-release.apk"   "dist/strascrous-${VERSION}-arm64-v8a.apk"
+                  cp "$APK_DIR/app-armeabi-v7a-release.apk" "dist/strascrous-${VERSION}-armeabi-v7a.apk"
+                  cp "$APK_DIR/app-x86_64-release.apk"      "dist/strascrous-${VERSION}-x86_64.apk"
+                  cp build/app/outputs/bundle/release/app-release.aab "dist/strascrous-${VERSION}.aab"
+                  (cd dist && sha256sum -- * > SHA256SUMS.txt)
+
+            - name: Ajouter les fichiers à la release GitHub
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: gh release upload "${TAG}" dist/* --clobber --repo "${GITHUB_REPOSITORY}"
+
+            - name: Nettoyer les secrets
+              if: always()
+              run: rm -f android/key.properties android/app/upload-keystore.jks
