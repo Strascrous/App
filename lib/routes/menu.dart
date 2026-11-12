@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/menu.dart';
 import 'package:strascrous/components/svg.dart';
+import 'package:strascrous/utils/snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MenuPage extends StatefulWidget {
@@ -108,7 +109,7 @@ class _MenuPageState extends State<MenuPage> {
         final selectedId = await showModalBottomSheet<String>(
             context: context,
             builder: (BuildContext context) {
-                return StatefulBuilder(
+                return SheetMessenger(child: StatefulBuilder(
                     builder: (selectorContext, setSelectorState) {
                         return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +156,7 @@ class _MenuPageState extends State<MenuPage> {
                                                         });
                                                     } catch (_) {
                                                         if (!selectorContext.mounted) return;
-                                                        // TODO: snackbar
+                                                        showSnackBar(selectorContext, "Impossible d'actualiser la liste. Vérifie ta connexion.");
                                                     } finally {
                                                         if (selectorContext.mounted) {
                                                             setSelectorState(() => isRefreshing = false);
@@ -178,7 +179,7 @@ class _MenuPageState extends State<MenuPage> {
                             ],
                         );
                     },
-                );
+                ));
             }
         );
 
@@ -219,7 +220,7 @@ class _MenuPageState extends State<MenuPage> {
 
         await showModalBottomSheet<void>(
             context: context,
-            builder: (BuildContext context) {
+            builder: (BuildContext context) => SheetMessenger(child: Builder(builder: (BuildContext context) {
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -270,7 +271,7 @@ class _MenuPageState extends State<MenuPage> {
                                             } catch (_) {}
 
                                             if (context.mounted) {
-                                                // TODO: Snackbar
+                                                showSnackBar(context, "Aucune application de cartes n'a pu être ouverte.");
                                             }
                                         },
                                     ),
@@ -299,7 +300,7 @@ class _MenuPageState extends State<MenuPage> {
                         )
                     ]
                 );
-            }
+            })),
         );
     }
 }

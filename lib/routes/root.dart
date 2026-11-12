@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
+import 'package:strascrous/utils/snackbar.dart';
 import 'package:strascrous_data/data.dart';
 
 class RootPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _RootPageState extends State<RootPage> {
             if (!mounted) return;
 
             if (restaurants.isEmpty) {
-                // TODO: Snackbar
+                showSnackBar(context, "Aucun restaurant trouvé pour cette ville.");
                 return;
             }
 
@@ -52,8 +53,7 @@ class _RootPageState extends State<RootPage> {
             context.go('/resto?id=${restaurants[0].id}');
         } catch (e) {
             if (!mounted) return;
-            print(e);
-            // TODO: Snackbar
+            showSnackBar(context, "Impossible de charger les restaurants. Vérifie ta connexion.");
         }
     }
 
@@ -62,19 +62,39 @@ class _RootPageState extends State<RootPage> {
         LocationPermission permission;
 
         serviceEnabled = await Geolocator.isLocationServiceEnabled();
-        if (!serviceEnabled) return; // TODO: Snackbar
+        if (!serviceEnabled) {
+            if (!mounted) return;
+            showSnackBar(
+                context,
+                "La localisation est désactivée.",
+                action: SnackBarAction(
+                    label: "Activer",
+                    onPressed: Geolocator.openLocationSettings,
+                ),
+            );
+            return;
+        }
 
         permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.denied) {
             permission = await Geolocator.requestPermission();
             if (permission == LocationPermission.denied) {
-                // TODO: Snackbar
+                if (!mounted) return;
+                showSnackBar(context, "Autorise l'accès à la localisation pour trier les villes par distance.");
                 return;
             }
         }
 
         if (permission == LocationPermission.deniedForever) {
-            // TODO: Snackbar
+            if (!mounted) return;
+            showSnackBar(
+                context,
+                "L'accès à la localisation a été refusé.",
+                action: SnackBarAction(
+                    label: "Paramètres",
+                    onPressed: Geolocator.openAppSettings,
+                ),
+            );
             return;
         }
 
