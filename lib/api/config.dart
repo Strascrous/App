@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-const String PROD_BASE_URL = 'http://localhost:3000';
+const String PROD_BASE_URL = 'https://api.strascrous.fr';
 const String DEV_BASE_URL = 'http://10.0.2.2:3000';
 
 final String BASE_URL =
