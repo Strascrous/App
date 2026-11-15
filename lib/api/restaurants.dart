@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 import 'package:strascrous/api/config.dart';
+import 'package:strascrous/utils/home_widget.dart';
 
 class Restaurant {
     final String id;
@@ -143,6 +144,7 @@ Future<List<Restaurant>> fetchRestaurants(String city) async {
         'restaurants',
         restaurants.map((item) => item.toJson()).toList(),
     );
+    await syncWidgetRestaurants(restaurants);
 
     return restaurants;
 }

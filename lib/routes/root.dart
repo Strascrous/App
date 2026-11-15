@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/utils/snackbar.dart';
 import 'package:strascrous_data/data.dart';
@@ -47,6 +48,7 @@ class _RootPageState extends State<RootPage> {
             }
 
             await _box.write('city', id);
+            await HomeWidget.saveWidgetData<String>('city', id);
             if (!mounted) return;
             final restaurant = restaurants.first;
             if (restaurant.type == RestaurantType.cafeteria) return context.go('/cafeteria?id=${restaurants[0].id}');

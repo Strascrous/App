@@ -11,11 +11,14 @@ import 'package:strascrous/routes/credits.dart';
 import 'package:strascrous/routes/menu.dart';
 import 'package:strascrous/routes/root.dart';
 import 'package:strascrous/routes/settings.dart';
+import 'package:strascrous/utils/home_widget.dart';
 
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await initializeDateFormatting('fr_FR');
     await GetStorage.init();
+    // Les installations existantes ont déjà un cache : on le recopie pour le widget.
+    syncWidgetRestaurants(readRestaurants(null));
 
     runApp(const App());
 }
