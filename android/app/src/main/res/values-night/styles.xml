@@ -15,4 +15,6 @@
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+    <!-- Écran de sélection du RU pour le widget (le contenu est dessiné en Compose) -->
+    <style name="WidgetConfigTheme" parent="@android:style/Theme.Material.NoActionBar" />
 </resources>

@@ -30,6 +30,7 @@ dependencies:
         git:
             url: https://github.com/Strascrous/Data.git
             ref: generated/dart
+    home_widget: ^0.10.0
 
 dev_dependencies:
     flutter_test:
