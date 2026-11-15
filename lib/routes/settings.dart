@@ -60,6 +60,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         onTap: () => _openThemeSelector(context),
                     ),
                     ListTile(
+                        leading: Icon(Icons.bug_report),
+                        title: const Text('Signaler un bug'),
+                        subtitle: const Text("Un problème ? Signale le nous"),
+                        onTap: () => context.push('/bug')
+                    ),
+                    ListTile(
+                        leading: Icon(Icons.lightbulb),
+                        title: const Text('Proposer une idée'),
+                        subtitle: const Text('Une idée ? Propose la'),
+                        onTap: () => context.push('/suggestion'),
+                    ),
+                    ListTile(
                         leading: Icon(Icons.favorite),
                         title: const Text('Donation'),
                         subtitle: const Text("Soutenir l'application en faisant une petite donation"),

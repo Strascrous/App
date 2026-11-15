@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:strascrous/components/svg.dart';
 import 'package:strascrous/utils/uri.dart';
 
-class CreditsPage extends StatefulWidget {
-    const CreditsPage({super.key});
 
-    @override
-    State<CreditsPage> createState() => _CreditsPageState();
-}
+class CreditsPage extends StatelessWidget {
+    const CreditsPage({ super.key });
 
-class _CreditsPageState extends State<CreditsPage> {
     @override
     Widget build(BuildContext context) {
         return Scaffold(
@@ -39,7 +35,7 @@ class _CreditsPageState extends State<CreditsPage> {
                     ListTile(
                         title: const Text("Material Design Icons"),
                         subtitle: const Text("Certaines icônes utilisées pour les villes"),
-                        leading: IconSvg("credits/mdi", alt: "Material Desgin Icons"),
+                        leading: IconSvg("credits/mdi", alt: "Material Design Icons"),
                         onTap: () => openUri(Uri.parse("https://pictogrammers.com/library/mdi/")),
                     ),
                 ],

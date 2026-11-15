@@ -7,17 +7,18 @@ import 'package:go_router/go_router.dart';
 import 'package:strascrous/api/restaurants.dart';
 import 'package:strascrous/components/navigation.dart';
 import 'package:strascrous/providers/theme_provider.dart';
+import 'package:strascrous/routes/bug.dart';
 import 'package:strascrous/routes/credits.dart';
 import 'package:strascrous/routes/menu.dart';
 import 'package:strascrous/routes/root.dart';
 import 'package:strascrous/routes/settings.dart';
+import 'package:strascrous/routes/suggestion.dart';
 import 'package:strascrous/utils/home_widget.dart';
 
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     await initializeDateFormatting('fr_FR');
     await GetStorage.init();
-    // Les installations existantes ont déjà un cache : on le recopie pour le widget.
     syncWidgetRestaurants(readRestaurants(null));
 
     runApp(const App());
@@ -143,6 +144,14 @@ final GoRouter router = GoRouter(
         GoRoute(
             path: "/credits",
             builder: (context, state) => const CreditsPage()
+        ),
+        GoRoute(
+            path: "/bug",
+            builder: (context, state) => const BugPage()
+        ),
+        GoRoute(
+            path: "/suggestion",
+            builder: (context, state) => const SuggestionPage()
         )
     ]
 );
