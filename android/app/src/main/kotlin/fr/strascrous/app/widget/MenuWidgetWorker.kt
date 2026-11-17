@@ -1,4 +1,4 @@
-package fr.oriondev.strascrous.widget
+package fr.strascrous.app.widget
 
 import android.content.Context
 import android.util.Log

@@ -1,4 +1,4 @@
-package fr.oriondev.strascrous.widget
+package fr.strascrous.app.widget
 
 import java.text.SimpleDateFormat
 import java.util.Calendar

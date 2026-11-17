@@ -1,4 +1,4 @@
-package fr.oriondev.strascrous.widget
+package fr.strascrous.app.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -41,7 +41,7 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import fr.oriondev.strascrous.MainActivity
+import fr.strascrous.app.MainActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 

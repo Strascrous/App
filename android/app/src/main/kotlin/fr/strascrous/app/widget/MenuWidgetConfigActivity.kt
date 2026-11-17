@@ -1,4 +1,4 @@
-package fr.oriondev.strascrous.widget
+package fr.strascrous.app.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import es.antonborri.home_widget.HomeWidgetPlugin
-import fr.oriondev.strascrous.MainActivity
+import fr.strascrous.app.MainActivity
 import kotlinx.coroutines.launch
 
 class MenuWidgetConfigActivity : ComponentActivity() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- android:configure : ouvre la sélection du RU à l'ajout. reconfigurable : appui long pour changer. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="fr.oriondev.strascrous.widget.MenuWidgetConfigActivity"
+    android:configure="fr.strascrous.app.widget.MenuWidgetConfigActivity"
     android:description="@string/menu_widget_description"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="180dp"

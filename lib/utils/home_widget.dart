@@ -15,7 +15,7 @@ Future<void> syncWidgetRestaurants(List<Restaurant> restaurants) async {
                 .toList()),
         );
         await HomeWidget.updateWidget(
-            qualifiedAndroidName: 'fr.oriondev.strascrous.widget.MenuWidgetReceiver',
+            qualifiedAndroidName: 'fr.strascrous.app.widget.MenuWidgetReceiver',
         );
     } catch (e) {
         debugPrint('Synchronisation du widget impossible : $e');

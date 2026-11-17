@@ -1,4 +1,4 @@
-package fr.oriondev.strascrous
+package fr.strascrous.app
 
 import io.flutter.embedding.android.FlutterActivity
 

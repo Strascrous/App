@@ -1,7 +1,7 @@
-package fr.oriondev.strascrous.widget
+package fr.strascrous.app.widget
 
 import android.net.Uri
-import fr.oriondev.strascrous.BuildConfig
+import fr.strascrous.app.BuildConfig
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
